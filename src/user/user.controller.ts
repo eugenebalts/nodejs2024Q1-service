@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -55,6 +56,14 @@ export class UserController {
 
     res.status(HttpStatus.OK).send({
       message: 'Password successfully updated',
+      response: true,
+    });
+  }
+
+  @Delete('id')
+  deleteUser(@Param('id') id: string, @Res() res: Response) {
+    res.status(HttpStatus.NO_CONTENT).send({
+      message: 'User successfully deleted',
       response: true,
     });
   }

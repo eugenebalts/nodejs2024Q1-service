@@ -16,8 +16,22 @@ import { ERROR_INVALID_ID, ERROR_USER_ALREADY_EXISTS } from 'src/constants';
 export class UserService {
   private users: Record<string, User> = {};
 
+  getPublicUserData(user: User) {
+    const publicUserData = {};
+
+    for (const key in user) {
+      if (key === 'password') continue;
+
+      publicUserData[key] = user[key];
+    }
+
+    return publicUserData;
+  }
+
   getAllUsers() {
-    return Object.values(this.users);
+    return Object.values(this.users).map((user) =>
+      this.getPublicUserData(user),
+    );
   }
 
   getUser(id: string) {
@@ -31,7 +45,7 @@ export class UserService {
       throw new NotFoundException();
     }
 
-    return user;
+    return this.getPublicUserData(user);
   }
 
   createUser(createUserDto: CreateUserDto) {
@@ -57,11 +71,12 @@ export class UserService {
 
     this.users[id] = newUser;
 
-    return newUser;
+    return this.getPublicUserData(newUser);
   }
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = this.getUser(id);
+    this.getUser(id);
+    const user = this.users[id];
 
     const { newPassword, oldPassword } = updatePasswordDto;
 
