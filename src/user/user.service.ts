@@ -15,18 +15,26 @@ export class UserService {
     return this.users.find((user) => user.id === id);
   }
 
-  createUser(user: CreateUserDto) {
+  createUser(createUserDto: CreateUserDto) {
+    const isUserExists = !!this.users.find(
+      (user) => user.login === createUserDto.login,
+    );
+
+    if (isUserExists) return false;
+
     const timestamp = new Date().getTime();
 
     const newUser: User = {
       id: uuidv4(),
-      login: user.login,
-      password: user.password,
+      login: createUserDto.login,
+      password: createUserDto.password,
       createdAt: timestamp,
       updatedAt: timestamp,
       version: 1,
     };
 
     this.users.push(newUser);
+
+    return newUser;
   }
 }
