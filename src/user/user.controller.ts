@@ -41,7 +41,7 @@ export class UserController {
 
     res.status(HttpStatus.CREATED).send({
       message: 'User created successfully',
-      response: user,
+      data: user,
     });
   }
 
@@ -56,15 +56,17 @@ export class UserController {
 
     res.status(HttpStatus.OK).send({
       message: 'Password successfully updated',
-      response: true,
+      data: true,
     });
   }
 
-  @Delete('id')
+  @Delete(':id')
   deleteUser(@Param('id') id: string, @Res() res: Response) {
+    this.userService.deleteUser(id);
+
     res.status(HttpStatus.NO_CONTENT).send({
       message: 'User successfully deleted',
-      response: true,
+      data: true,
     });
   }
 }

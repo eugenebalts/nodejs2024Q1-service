@@ -90,4 +90,10 @@ export class UserService {
 
     return;
   }
+
+  deleteUser(id: string) {
+    this.getUser(id);
+
+    return delete this.users[id];
+  }
 }
