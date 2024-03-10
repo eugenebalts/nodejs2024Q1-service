@@ -66,5 +66,36 @@ export class ArtistService {
     this.getArtist(id);
 
     delete this.database.artists[id];
+
+    this.updateTracksArtistId(id);
+    this.updateAlbumsArtistId(id);
+  }
+
+  private updateTracksArtistId(id: string) {
+    const tracks = this.database.tracks;
+
+    for (const trackId in tracks) {
+      const curTrack = tracks[trackId];
+
+      const { artistId } = curTrack;
+
+      if (artistId === id) {
+        curTrack.artistId = null;
+      }
+    }
+  }
+
+  private updateAlbumsArtistId(id: string) {
+    const albums = this.database.albums;
+
+    for (const albumId in albums) {
+      const curAlbum = albums[albumId];
+
+      const { artistId } = curAlbum;
+
+      if (artistId === id) {
+        curAlbum.artistId = null;
+      }
+    }
   }
 }
