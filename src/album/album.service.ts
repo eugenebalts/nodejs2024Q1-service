@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
 import { ERROR_INVALID_ID } from 'src/constants';
+import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
@@ -42,5 +43,24 @@ export class AlbumService {
     this.database.albums[id] = newAlbum;
 
     return newAlbum;
+  }
+
+  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
+    this.getAlbum(id);
+
+    for (const key in updateAlbumDto) {
+      const newValue = updateAlbumDto[key];
+      if (newValue !== undefined) {
+        this.database.albums[id][key] = newValue;
+      }
+    }
+
+    return this.getAlbum(id);
+  }
+
+  deleteAlbum(id: string) {
+    this.getAlbum(id);
+
+    delete this.database.albums[id];
   }
 }
