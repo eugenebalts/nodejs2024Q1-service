@@ -15,11 +15,11 @@ import { DataBaseService } from 'src/database/database.service';
 export class ArtistService {
   constructor(private database: DataBaseService) {}
 
-  getAllArtists() {
+  getAllArtists(): Artist[] {
     return Object.values(this.database.artists);
   }
 
-  getArtist(id: string) {
+  getArtist(id: string): Artist {
     if (!isValidUuid(id)) {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
@@ -33,7 +33,7 @@ export class ArtistService {
     return this.database.artists[id];
   }
 
-  createArtist(createArtistDto: CreateArtistDto) {
+  createArtist(createArtistDto: CreateArtistDto): Artist {
     const { name, grammy } = createArtistDto;
 
     const id = uuidv4();
@@ -49,7 +49,7 @@ export class ArtistService {
     return newArtist;
   }
 
-  updateArtist(id: string, updateArtistDto: UpdateArtistDto) {
+  updateArtist(id: string, updateArtistDto: UpdateArtistDto): Artist {
     this.getArtist(id);
 
     for (const key in updateArtistDto) {
@@ -62,9 +62,9 @@ export class ArtistService {
     return this.database.artists[id];
   }
 
-  deleteArtist(id: string) {
+  deleteArtist(id: string): void {
     this.getArtist(id);
 
-    return delete this.database.artists[id];
+    delete this.database.artists[id];
   }
 }

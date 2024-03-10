@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from './user.interface';
+import { PublicUser, User } from './user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
@@ -17,25 +17,19 @@ import { DataBaseService } from 'src/database/database.service';
 export class UserService {
   constructor(private database: DataBaseService) {}
 
-  getPublicUserData(user: User) {
-    const publicUserData = {};
-
-    for (const key in user) {
-      if (key === 'password') continue;
-
-      publicUserData[key] = user[key];
-    }
+  getPublicUserData(user: User): PublicUser {
+    const { password, ...publicUserData } = user;
 
     return publicUserData;
   }
 
-  getAllUsers() {
+  getAllUsers(): PublicUser[] {
     return Object.values(this.database.users).map((user) =>
       this.getPublicUserData(user),
     );
   }
 
-  getUser(id: string) {
+  getUser(id: string): PublicUser {
     if (!isValidUuid(id)) {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
@@ -49,7 +43,7 @@ export class UserService {
     return this.getPublicUserData(user);
   }
 
-  createUser(createUserDto: CreateUserDto) {
+  createUser(createUserDto: CreateUserDto): PublicUser {
     const timestamp = new Date().getTime();
     const id = uuidv4();
 
@@ -67,7 +61,7 @@ export class UserService {
     return this.getPublicUserData(newUser);
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
+  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): PublicUser {
     this.getUser(id);
 
     const user = this.database.users[id];
@@ -90,9 +84,9 @@ export class UserService {
     return this.getPublicUserData(updatedUser);
   }
 
-  deleteUser(id: string) {
+  deleteUser(id: string): void {
     this.getUser(id);
 
-    return delete this.database.users[id];
+    delete this.database.users[id];
   }
 }
