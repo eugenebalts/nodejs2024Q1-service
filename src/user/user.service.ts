@@ -49,13 +49,13 @@ export class UserService {
   }
 
   createUser(createUserDto: CreateUserDto) {
-    const isUserExists = !!Object.values(this.users).filter(
-      (user) => user.login === createUserDto.login,
-    ).length;
+    // const isUserExists = !!Object.values(this.users).filter(
+    //   (user) => user.login === createUserDto.login,
+    // ).length;
 
-    if (isUserExists) {
-      throw new ConflictException(ERROR_USER_ALREADY_EXISTS);
-    }
+    // if (isUserExists) {
+    //   throw new ConflictException(ERROR_USER_ALREADY_EXISTS);
+    // }
 
     const timestamp = new Date().getTime();
     const id = uuidv4();
@@ -88,7 +88,7 @@ export class UserService {
     this.users[id].updatedAt = new Date().getTime();
     this.users[id].version += 1;
 
-    return;
+    return this.getPublicUserData(this.users[id]);
   }
 
   deleteUser(id: string) {

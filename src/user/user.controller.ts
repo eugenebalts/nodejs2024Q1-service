@@ -23,7 +23,7 @@ import {
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
-  getAllUsers() {
+  getAll() {
     return this.userService.getAllUsers();
   }
 
@@ -39,10 +39,7 @@ export class UserController {
   createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const user = this.userService.createUser(createUserDto);
 
-    res.status(HttpStatus.CREATED).send({
-      message: 'User created successfully',
-      data: user,
-    });
+    res.status(HttpStatus.CREATED).send(user);
   }
 
   @Put(':id')
@@ -52,21 +49,15 @@ export class UserController {
     updatePasswordDto: UpdatePasswordDto,
     @Res() res: Response,
   ) {
-    this.userService.updatePassword(id, updatePasswordDto);
+    const updatedUser = this.userService.updatePassword(id, updatePasswordDto);
 
-    res.status(HttpStatus.OK).send({
-      message: 'Password successfully updated',
-      data: true,
-    });
+    res.status(HttpStatus.OK).send(updatedUser);
   }
 
   @Delete(':id')
   deleteUser(@Param('id') id: string, @Res() res: Response) {
     this.userService.deleteUser(id);
 
-    res.status(HttpStatus.NO_CONTENT).send({
-      message: 'User successfully deleted',
-      data: true,
-    });
+    res.status(HttpStatus.NO_CONTENT).send(true);
   }
 }
