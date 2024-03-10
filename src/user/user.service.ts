@@ -11,10 +11,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
 import { ERROR_INVALID_ID, ERROR_USER_ALREADY_EXISTS } from 'src/constants';
+import { DataBaseService } from 'src/database/database.service';
 
 @Injectable()
 export class UserService {
-  private users: Record<string, User> = {};
+  constructor(private database: DataBaseService) {}
 
   getPublicUserData(user: User) {
     const publicUserData = {};
@@ -29,7 +30,7 @@ export class UserService {
   }
 
   getAllUsers() {
-    return Object.values(this.users).map((user) =>
+    return Object.values(this.database.users).map((user) =>
       this.getPublicUserData(user),
     );
   }
@@ -39,7 +40,7 @@ export class UserService {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const user = this.users[id];
+    const user = this.database.users[id];
 
     if (!user) {
       throw new NotFoundException();
@@ -49,14 +50,6 @@ export class UserService {
   }
 
   createUser(createUserDto: CreateUserDto) {
-    // const isUserExists = !!Object.values(this.users).filter(
-    //   (user) => user.login === createUserDto.login,
-    // ).length;
-
-    // if (isUserExists) {
-    //   throw new ConflictException(ERROR_USER_ALREADY_EXISTS);
-    // }
-
     const timestamp = new Date().getTime();
     const id = uuidv4();
 
@@ -69,14 +62,15 @@ export class UserService {
       version: 1,
     };
 
-    this.users[id] = newUser;
+    this.database.users[id] = newUser;
 
     return this.getPublicUserData(newUser);
   }
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     this.getUser(id);
-    const user = this.users[id];
+
+    const user = this.database.users[id];
 
     const { newPassword, oldPassword } = updatePasswordDto;
 
@@ -84,16 +78,21 @@ export class UserService {
       throw new ForbiddenException('Wrong password');
     }
 
-    this.users[id].password = newPassword;
-    this.users[id].updatedAt = new Date().getTime();
-    this.users[id].version += 1;
+    const updatedUser = {
+      ...user,
+      password: newPassword,
+      updatedAt: new Date().getTime(),
+      version: user.version + 1,
+    };
 
-    return this.getPublicUserData(this.users[id]);
+    this.database.users[id] = updatedUser;
+
+    return this.getPublicUserData(updatedUser);
   }
 
   deleteUser(id: string) {
     this.getUser(id);
 
-    return delete this.users[id];
+    return delete this.database.users[id];
   }
 }

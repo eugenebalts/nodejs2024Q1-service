@@ -9,13 +9,14 @@ import { Artist } from './artist.interface';
 import { isValidUuid } from 'src/utils/isValidUuid';
 import { ERROR_INVALID_ID } from 'src/constants';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { DataBaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ArtistService {
-  private artists: Record<string, Artist> = {};
+  constructor(private database: DataBaseService) {}
 
   getAllArtists() {
-    return Object.values(this.artists);
+    return Object.values(this.database.artists);
   }
 
   getArtist(id: string) {
@@ -23,13 +24,13 @@ export class ArtistService {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const artist = this.artists[id];
+    const artist = this.database.artists[id];
 
     if (!artist) {
       throw new NotFoundException();
     }
 
-    return this.artists[id];
+    return this.database.artists[id];
   }
 
   createArtist(createArtistDto: CreateArtistDto) {
@@ -43,7 +44,7 @@ export class ArtistService {
       grammy,
     };
 
-    this.artists[id] = newArtist;
+    this.database.artists[id] = newArtist;
 
     return newArtist;
   }
@@ -54,10 +55,16 @@ export class ArtistService {
     for (const key in updateArtistDto) {
       const newValue = updateArtistDto[key];
       if (newValue !== undefined) {
-        this.artists[id][key] = newValue;
+        this.database.artists[id][key] = newValue;
       }
     }
 
-    return this.artists[id];
+    return this.database.artists[id];
+  }
+
+  deleteArtist(id: string) {
+    this.getArtist(id);
+
+    return delete this.database.artists[id];
   }
 }

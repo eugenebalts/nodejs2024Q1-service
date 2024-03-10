@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -49,5 +50,12 @@ export class ArtistController {
     const updatedArtist = this.artistService.updateArtist(id, updateArtistDto);
 
     res.status(HttpStatus.OK).send(updatedArtist);
+  }
+
+  @Delete(':id')
+  deleteArtist(@Param('id') id: string, @Res() res: Response) {
+    this.artistService.deleteArtist(id);
+
+    res.status(HttpStatus.NO_CONTENT).send(true);
   }
 }
