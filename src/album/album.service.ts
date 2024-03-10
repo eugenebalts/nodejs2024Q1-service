@@ -62,5 +62,21 @@ export class AlbumService {
     this.getAlbum(id);
 
     delete this.database.albums[id];
+
+    this.updateTracksAlbumId(id);
+  }
+
+  private updateTracksAlbumId(id: string) {
+    const tracks = this.database.tracks;
+
+    for (const trackId in tracks) {
+      const curTrack = tracks[trackId];
+
+      const { albumId } = curTrack;
+
+      if (albumId === id) {
+        curTrack.albumId = null;
+      }
+    }
   }
 }
