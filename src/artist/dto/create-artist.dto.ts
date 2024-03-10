@@ -5,6 +5,7 @@ export const createArtistSchema = z
     name: z.string(),
     grammy: z.boolean(),
   })
+  .strict()
   .required();
 
 export type CreateArtistDto = z.infer<typeof createArtistSchema>;

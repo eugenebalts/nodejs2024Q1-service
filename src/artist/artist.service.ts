@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Artist } from './artist.interface';
 import { isValidUuid } from 'src/utils/isValidUuid';
 import { ERROR_INVALID_ID } from 'src/constants';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Injectable()
 export class ArtistService {
@@ -45,5 +46,18 @@ export class ArtistService {
     this.artists[id] = newArtist;
 
     return newArtist;
+  }
+
+  updateArtist(id: string, updateArtistDto: UpdateArtistDto) {
+    this.getArtist(id);
+
+    for (const key in updateArtistDto) {
+      const newValue = updateArtistDto[key];
+      if (newValue !== undefined) {
+        this.artists[id][key] = newValue;
+      }
+    }
+
+    return this.artists[id];
   }
 }
