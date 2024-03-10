@@ -59,7 +59,7 @@ export class ArtistService {
       }
     }
 
-    return this.database.artists[id];
+    return this.getArtist(id);
   }
 
   deleteArtist(id: string): void {
