@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Param,
   Post,
   Res,
   UsePipes,
@@ -19,6 +20,13 @@ export class ArtistController {
   @Get()
   getAllArtists() {
     return this.artistService.getAllArtists();
+  }
+
+  @Get(':id')
+  getArtist(@Param('id') id: string, @Res() res: Response) {
+    const artist = this.artistService.getArtist(id);
+
+    res.status(HttpStatus.OK).send(artist);
   }
 
   @Post()
