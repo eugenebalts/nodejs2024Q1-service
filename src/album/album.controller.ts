@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto, createAlbumSchema } from './dto/create-album.dto';
 import { ZodValidationPipe } from 'src/utils/zodValidationPipe';
@@ -11,6 +19,13 @@ export class AlbumController {
   @Get()
   getAllAlbums() {
     return this.albumService.getAllAlbums();
+  }
+
+  @Get(':id')
+  getAlbum(@Param('id') id: string, @Res() res: Response) {
+    const album = this.albumService.getAlbum(id);
+
+    res.status(HttpStatus.OK).send(album);
   }
 
   @Post()
