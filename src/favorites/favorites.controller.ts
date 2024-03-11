@@ -20,36 +20,46 @@ export class FavoritesController {
     return this.favoritesService.getAllFavorites();
   }
 
-  @Post('/:object/:id')
-  addToFavorites(
-    @Param('id') id: string,
-    @Param('object') object: 'artist' | 'album' | 'track',
-    @Res() res: Response,
-  ) {
-    const allowedObjects = ['artist', 'album', 'track'];
-
-    if (!allowedObjects.includes(object)) {
-      throw new NotFoundException(`Cannot POST /${object}/${id}`);
-    }
-
-    this.favoritesService.addToFavorites(id, `${object}s`);
+  @Post('/track/:id')
+  addTrackToFavorites(@Param('id') id: string, @Res() res: Response) {
+    this.favoritesService.addToFavorites(id, 'tracks');
 
     res.status(HttpStatus.CREATED).send('Success');
   }
 
-  @Delete('/:object/:id')
-  deleteFromFavorites(
-    @Param('id') id: string,
-    @Param('object') object: 'artist' | 'album' | 'track',
-    @Res() res: Response,
-  ) {
+  @Delete('/track/:id')
+  deleteTrackFromFavorites(@Param('id') id: string, @Res() res: Response) {
     const allowedObjects = ['artist', 'album', 'track'];
 
-    if (!allowedObjects.includes(object) && typeof id === 'string') {
-      throw new NotFoundException(`Cannot POST /${object}/${id}`);
-    }
+    this.favoritesService.deleteFromFavorites(id, 'tracks');
 
-    this.favoritesService.deleteFromFavorites(id, `${object}s`);
+    res.status(HttpStatus.NO_CONTENT).send('Success');
+  }
+
+  @Post('/artist/:id')
+  addArtistToFavorites(@Param('id') id: string, @Res() res: Response) {
+    this.favoritesService.addToFavorites(id, 'artists');
+
+    res.status(HttpStatus.CREATED).send('Success');
+  }
+
+  @Delete('/artist/:id')
+  deleteArtistFromFavorites(@Param('id') id: string, @Res() res: Response) {
+    this.favoritesService.deleteFromFavorites(id, 'artists');
+
+    res.status(HttpStatus.NO_CONTENT).send('Success');
+  }
+
+  @Post('/album/:id')
+  addAlbumToFavorites(@Param('id') id: string, @Res() res: Response) {
+    this.favoritesService.addToFavorites(id, 'albums');
+
+    res.status(HttpStatus.CREATED).send('Success');
+  }
+
+  @Delete('/album/:id')
+  deleteAlbumFromFavorites(@Param('id') id: string, @Res() res: Response) {
+    this.favoritesService.deleteFromFavorites(id, 'albums');
 
     res.status(HttpStatus.NO_CONTENT).send('Success');
   }
