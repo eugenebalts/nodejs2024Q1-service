@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller,
   Delete,
   Get,
@@ -8,7 +7,6 @@ import {
   Param,
   Post,
   Res,
-  UsePipes,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { Response } from 'express';

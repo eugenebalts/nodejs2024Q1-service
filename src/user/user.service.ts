@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -10,7 +9,7 @@ import { PublicUser, User } from './user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import { ERROR_INVALID_ID, ERROR_USER_ALREADY_EXISTS } from 'src/constants';
+import { ERROR_INVALID_ID } from 'src/constants';
 import { DataBaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -18,7 +17,15 @@ export class UserService {
   constructor(private database: DataBaseService) {}
 
   getPublicUserData(user: User): PublicUser {
-    const { password, ...publicUserData } = user;
+    const { id, login, version, createdAt, updatedAt } = user;
+
+    const publicUserData: PublicUser = {
+      id,
+      login,
+      version,
+      createdAt,
+      updatedAt,
+    };
 
     return publicUserData;
   }
