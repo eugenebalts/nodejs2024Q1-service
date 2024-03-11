@@ -62,6 +62,7 @@ export class TrackService {
   deleteTrack(id: string): void {
     this.getTrack(id);
 
+    this.database.deleteFromFavorites(id, 'tracks');
     delete this.database.tracks[id];
   }
 }

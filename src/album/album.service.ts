@@ -61,9 +61,9 @@ export class AlbumService {
   deleteAlbum(id: string) {
     this.getAlbum(id);
 
-    delete this.database.albums[id];
-
     this.updateTracksAlbumId(id);
+    this.database.deleteFromFavorites(id, 'albums');
+    delete this.database.albums[id];
   }
 
   private updateTracksAlbumId(id: string) {

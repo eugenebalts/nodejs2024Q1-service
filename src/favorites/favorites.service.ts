@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { DataBaseService } from 'src/database/database.service';
@@ -49,7 +50,7 @@ export class FavoritesService {
       throw new UnprocessableEntityException();
     }
 
-    this.database.favorites[objectToAdd].push(id);
+    this.database.addToFavorites(id, objectToAdd);
   }
 
   deleteFromFavorites(
@@ -60,18 +61,12 @@ export class FavoritesService {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const object = this.database[objectToDelete][id];
+    const isAdded = this.database.favorites[objectToDelete].includes(id);
 
-    if (!object) {
-      throw new UnprocessableEntityException();
+    if (!isAdded) {
+      throw new NotFoundException();
     }
 
-    const objectIndex = this.database.favorites[objectToDelete].findIndex(
-      (val) => val === id,
-    );
-
-    if (objectIndex !== -1) {
-      this.database.favorites[objectToDelete].splice(objectIndex, 1);
-    }
+    this.database.deleteFromFavorites(id, objectToDelete);
   }
 }

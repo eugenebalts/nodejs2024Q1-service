@@ -65,10 +65,10 @@ export class ArtistService {
   deleteArtist(id: string): void {
     this.getArtist(id);
 
-    delete this.database.artists[id];
-
     this.updateTracksArtistId(id);
     this.updateAlbumsArtistId(id);
+    this.database.deleteFromFavorites(id, 'artists');
+    delete this.database.artists[id];
   }
 
   private updateTracksArtistId(id: string) {
