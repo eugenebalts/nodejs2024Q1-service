@@ -44,13 +44,23 @@ export class UserService {
   }
 
   createUser(createUserDto: CreateUserDto): PublicUser {
+    const { login, password } = createUserDto;
+
+    const registeredUser = Object.values(this.database.users).find(
+      (user) => user.login === login,
+    );
+
+    if (registeredUser) {
+      return this.getPublicUserData(registeredUser);
+    }
+
     const timestamp = new Date().getTime();
     const id = uuidv4();
 
     const newUser: User = {
       id,
-      login: createUserDto.login,
-      password: createUserDto.password,
+      login,
+      password,
       createdAt: timestamp,
       updatedAt: timestamp,
       version: 1,
