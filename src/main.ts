@@ -1,18 +1,15 @@
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { parse } from 'yamljs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
-    .setTitle('Home Library Service')
-    .setDescription(
-      'Users can create, read, update, delete data about Artists, Tracks and Albums, add them to Favorites in their own Home Library!',
-    )
-    .setVersion('1.0')
-    .build();
-
+  const apiSpec = readFileSync(join(__dirname, '../doc/api.yaml'), 'utf-8');
+  const config = parse(apiSpec);
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 

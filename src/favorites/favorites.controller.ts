@@ -3,7 +3,6 @@ import {
   Delete,
   Get,
   HttpStatus,
-  NotFoundException,
   Param,
   Post,
   Res,
@@ -29,8 +28,6 @@ export class FavoritesController {
 
   @Delete('/track/:id')
   deleteTrackFromFavorites(@Param('id') id: string, @Res() res: Response) {
-    const allowedObjects = ['artist', 'album', 'track'];
-
     this.favoritesService.deleteFromFavorites(id, 'tracks');
 
     res.status(HttpStatus.NO_CONTENT).send('Success');
