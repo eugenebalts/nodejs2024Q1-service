@@ -1,0 +1,26 @@
+version: '1'
+services:
+  postgres: 
+    container_name: postgres
+    build: 
+      dockerfile: Dockerfile.postgres
+    ports:
+      - '5432:5432'
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+  api: 
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - '4000:4000'
+
+networks:
+  postgres:
+    driver: bridge
