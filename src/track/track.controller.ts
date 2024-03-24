@@ -21,40 +21,40 @@ export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Get()
-  getAllTracks() {
-    return this.trackService.getAllTracks();
+  async getAllTracks() {
+    return await this.trackService.getAllTracks();
   }
 
   @Get(':id')
-  getTrack(@Param('id') id: string, @Res() res: Response) {
-    const track = this.trackService.getTrack(id);
+  async getTrack(@Param('id') id: string, @Res() res: Response) {
+    const track = await this.trackService.getTrack(id);
 
     res.status(HttpStatus.OK).send(track);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createTrackSchema))
-  createTrack(@Body() createTrackDto: CreateTrackDto, @Res() res: Response) {
-    const track = this.trackService.createTrack(createTrackDto);
+  async createTrack(@Body() createTrackDto: CreateTrackDto, @Res() res: Response) {
+    const track = await this.trackService.createTrack(createTrackDto);
 
     res.status(HttpStatus.CREATED).send(track);
   }
 
   @Put(':id')
-  updateTrack(
+  async updateTrack(
     @Body(new ZodValidationPipe(updateTrackSchema))
     updateTrackDto: UpdateTrackDto,
     @Param('id') id: string,
     @Res() res: Response,
   ) {
-    const updatedTrack = this.trackService.updateTrack(id, updateTrackDto);
+    const updatedTrack = await this.trackService.updateTrack(id, updateTrackDto);
 
     res.status(HttpStatus.OK).send(updatedTrack);
   }
 
   @Delete(':id')
-  deleteTrack(@Param('id') id: string, @Res() res: Response) {
-    this.trackService.deleteTrack(id);
+  async deleteTrack(@Param('id') id: string, @Res() res: Response) {
+    await this.trackService.deleteTrack(id);
 
     res.status(HttpStatus.NO_CONTENT).send(true);
   }

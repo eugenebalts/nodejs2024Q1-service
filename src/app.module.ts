@@ -9,6 +9,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './user/models/user.entity';
+import { Track } from './track/models/track.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { User } from './user/models/user.entity';
       username: 'eugenebalts',
       password: 'eugenebalts',
       database: 'nestjs',
-      entities: [User],
+      entities: [User, Track],
       synchronize: true,
     }),
   ],

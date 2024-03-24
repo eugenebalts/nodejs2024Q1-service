@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const updateTrackSchema = z
   .object({
     name: z.string().optional(),
-    artistId: z.string().nullable().optional(),
-    albumId: z.string().nullable().optional(),
+    artistId: z.string().uuid().nullable().optional(),
+    albumId: z.string().uuid().nullable().optional(),
     duration: z.number().int().optional(),
   })
   .strict();
