@@ -2,19 +2,28 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { PublicUser, User } from './user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import { ERROR_INVALID_ID } from 'src/constants';
-import { DataBaseService } from 'src/database/database.service';
+import {
+  ERROR_INVALID_ID,
+  FAILED_TO_DELETE,
+  FAILED_TO_SAVE,
+} from '../constants';
+import { Repository } from 'typeorm';
+import { User, PublicUser } from './models/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
-  constructor(private database: DataBaseService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
   getPublicUserData(user: User): PublicUser {
     const { id, login, version, createdAt, updatedAt } = user;
@@ -23,39 +32,44 @@ export class UserService {
       id,
       login,
       version,
-      createdAt,
-      updatedAt,
+      createdAt: Number(createdAt),
+      updatedAt: Number(updatedAt),
     };
 
     return publicUserData;
   }
 
-  getAllUsers(): PublicUser[] {
-    return Object.values(this.database.users).map((user) =>
-      this.getPublicUserData(user),
-    );
+  async getAllUsers(): Promise<PublicUser[]> {
+    const allUsers = await this.userRepository.find();
+
+    return allUsers.map((user) => this.getPublicUserData(user));
   }
 
-  getUser(id: string): PublicUser {
+  async getUser<T extends 'private' | 'public'>(
+    id: string,
+    mode: T,
+  ): Promise<T extends 'private' ? User : PublicUser> {
     if (!isValidUuid(id)) {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const user = this.database.users[id];
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new NotFoundException();
     }
 
-    return this.getPublicUserData(user);
+    return mode === 'private'
+      ? user
+      : (this.getPublicUserData(user) as T extends 'private'
+          ? User
+          : PublicUser);
   }
 
-  createUser(createUserDto: CreateUserDto): PublicUser {
+  async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
     const { login, password } = createUserDto;
 
-    const registeredUser = Object.values(this.database.users).find(
-      (user) => user.login === login,
-    );
+    const registeredUser = await this.userRepository.findOneBy({ login });
 
     if (registeredUser) {
       return this.getPublicUserData(registeredUser);
@@ -73,15 +87,20 @@ export class UserService {
       version: 1,
     };
 
-    this.database.users[id] = newUser;
+    try {
+      await this.userRepository.save(newUser);
 
-    return this.getPublicUserData(newUser);
+      return this.getPublicUserData(newUser);
+    } catch (_) {
+      throw new InternalServerErrorException(FAILED_TO_SAVE);
+    }
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): PublicUser {
-    this.getUser(id);
-
-    const user = this.database.users[id];
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<PublicUser> {
+    const user = await this.getUser(id, 'private');
 
     const { newPassword, oldPassword } = updatePasswordDto;
 
@@ -89,21 +108,31 @@ export class UserService {
       throw new ForbiddenException('Wrong password');
     }
 
-    const updatedUser = {
+    const timestamp = new Date().getTime();
+
+    const updatedUser: User = {
       ...user,
       password: newPassword,
-      updatedAt: new Date().getTime(),
+      updatedAt: timestamp,
       version: user.version + 1,
     };
 
-    this.database.users[id] = updatedUser;
+    try {
+      const user = await this.userRepository.save(updatedUser);
 
-    return this.getPublicUserData(updatedUser);
+      return this.getPublicUserData(user);
+    } catch (_) {
+      throw new InternalServerErrorException(FAILED_TO_SAVE);
+    }
   }
 
-  deleteUser(id: string): void {
-    this.getUser(id);
+  async deleteUser(id: string): Promise<void> {
+    await this.getUser(id, 'public');
 
-    delete this.database.users[id];
+    try {
+      await this.userRepository.delete(id);
+    } catch (_) {
+      throw new InternalServerErrorException(FAILED_TO_DELETE);
+    }
   }
 }
