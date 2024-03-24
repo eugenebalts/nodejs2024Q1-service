@@ -7,9 +7,9 @@ import { ArtistModule } from './artist/artist.module';
 import { AlbumModule } from './album/album.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { User } from './user/models/user.entity';
 import { Track } from './track/models/track.entity';
+import { Artist } from './artist/models/artist.entity';
 
 @Module({
   imports: [
@@ -25,13 +25,11 @@ import { Track } from './track/models/track.entity';
       username: 'eugenebalts',
       password: 'eugenebalts',
       database: 'nestjs',
-      entities: [User, Track],
+      entities: [User, Track, Artist],
       synchronize: true,
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
-export class AppModule {
-  constructor(private dataSource: DataSource) {}
-}
+export class AppModule {}

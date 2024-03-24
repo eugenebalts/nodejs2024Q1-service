@@ -1,39 +1,47 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { Artist } from './artist.interface';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import { ERROR_INVALID_ID } from 'src/constants';
+import { ERROR_INVALID_ID, FAILED_TO_DELETE, FAILED_TO_SAVE } from 'src/constants';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { DataBaseService } from 'src/database/database.service';
+import { Repository } from 'typeorm';
+import { Artist } from './models/artist.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Track } from 'src/track/models/track.entity';
 
 @Injectable()
 export class ArtistService {
-  constructor(private database: DataBaseService) {}
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+    @InjectRepository(Track)
+    private readonly trackRepository: Repository<Track>
+  ) {}
 
-  getAllArtists(): Artist[] {
-    return Object.values(this.database.artists);
+  async getAllArtists(): Promise<Artist[]> {
+    return await this.artistRepository.find();
   }
 
-  getArtist(id: string): Artist {
+  async getArtist(id: string): Promise<Artist> {
     if (!isValidUuid(id)) {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const artist = this.database.artists[id];
+    const artist = await this.artistRepository.findOneBy({id});
 
     if (!artist) {
       throw new NotFoundException();
     }
 
-    return this.database.artists[id];
+    return artist;
   }
 
-  createArtist(createArtistDto: CreateArtistDto): Artist {
+  async createArtist(createArtistDto: CreateArtistDto): Promise<Artist> {
     const { name, grammy } = createArtistDto;
 
     const id = uuidv4();
@@ -44,58 +52,73 @@ export class ArtistService {
       grammy,
     };
 
-    this.database.artists[id] = newArtist;
+    try {
+      await this.artistRepository.save(newArtist);
 
-    return newArtist;
+      return newArtist;
+    } catch (err) {
+      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+    }
   }
 
-  updateArtist(id: string, updateArtistDto: UpdateArtistDto): Artist {
-    this.getArtist(id);
+  async updateArtist(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+    const artist = await this.getArtist(id);
 
     for (const key in updateArtistDto) {
       const newValue = updateArtistDto[key];
+
       if (newValue !== undefined) {
-        this.database.artists[id][key] = newValue;
+        artist[key] = newValue;
       }
     }
 
-    return this.getArtist(id);
-  }
+    try {
+      await this.artistRepository.save(artist);
 
-  deleteArtist(id: string): void {
-    this.getArtist(id);
-
-    this.updateTracksArtistId(id);
-    this.updateAlbumsArtistId(id);
-    this.database.deleteFromFavorites(id, 'artists');
-    delete this.database.artists[id];
-  }
-
-  private updateTracksArtistId(id: string) {
-    const tracks = this.database.tracks;
-
-    for (const trackId in tracks) {
-      const curTrack = tracks[trackId];
-
-      const { artistId } = curTrack;
-
-      if (artistId === id) {
-        curTrack.artistId = null;
-      }
+      return artist;
+    } catch (err) {
+      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
     }
   }
 
-  private updateAlbumsArtistId(id: string) {
-    const albums = this.database.albums;
+  async deleteArtist(id: string): Promise<void> {
+    await this.getArtist(id);
 
-    for (const albumId in albums) {
-      const curAlbum = albums[albumId];
+    try {
+      await this.artistRepository.delete(id);
+    } catch (err) {
+      throw new InternalServerErrorException(`${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`)
+    }
 
-      const { artistId } = curAlbum;
+    await this.updateTracksArtistId(id);
+    // this.updateAlbumsArtistId(id);
+    // this.database.deleteFromFavorites(id, 'artists');
+  }
 
-      if (artistId === id) {
-        curAlbum.artistId = null;
-      }
+  private async updateTracksArtistId(id: string) {
+    const tracksWithArtistId = await this.trackRepository.findBy({artistId: id});
+
+    try {
+      await Promise.all(tracksWithArtistId.map(async (track) => {
+        track.artistId = null;
+        await this.trackRepository.save(track);
+      }));
+    } catch (err) {
+      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
     }
   }
+
+  // private updateAlbumsArtistId(id: string) {
+  //   const albums = this.database.albums;
+
+  //   for (const albumId in albums) {
+  //     const curAlbum = albums[albumId];
+
+  //     const { artistId } = curAlbum;
+
+  //     if (artistId === id) {
+  //       curAlbum.artistId = null;
+  //     }
+  //   }
+  // }
 }
