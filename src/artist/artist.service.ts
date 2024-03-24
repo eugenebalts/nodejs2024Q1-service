@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { Artist } from './models/artist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from 'src/track/models/track.entity';
+import { Album } from 'src/album/models/album.entity';
 
 @Injectable()
 export class ArtistService {
@@ -20,7 +21,9 @@ export class ArtistService {
     @InjectRepository(Artist)
     private readonly artistRepository: Repository<Artist>,
     @InjectRepository(Track)
-    private readonly trackRepository: Repository<Track>
+    private readonly trackRepository: Repository<Track>,
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>
   ) {}
 
   async getAllArtists(): Promise<Artist[]> {
@@ -91,7 +94,7 @@ export class ArtistService {
     }
 
     await this.updateTracksArtistId(id);
-    // this.updateAlbumsArtistId(id);
+    await this.updateAlbumsArtistId(id);
     // this.database.deleteFromFavorites(id, 'artists');
   }
 
@@ -101,6 +104,7 @@ export class ArtistService {
     try {
       await Promise.all(tracksWithArtistId.map(async (track) => {
         track.artistId = null;
+
         await this.trackRepository.save(track);
       }));
     } catch (err) {
@@ -108,17 +112,17 @@ export class ArtistService {
     }
   }
 
-  // private updateAlbumsArtistId(id: string) {
-  //   const albums = this.database.albums;
+  private async updateAlbumsArtistId(id: string) {
+    const albumsWithArtistId = await this.albumRepository.findBy({artistId: id});
 
-  //   for (const albumId in albums) {
-  //     const curAlbum = albums[albumId];
+    try {
+      await Promise.all(albumsWithArtistId.map(async (album) => {
+        album.artistId = null;
 
-  //     const { artistId } = curAlbum;
-
-  //     if (artistId === id) {
-  //       curAlbum.artistId = null;
-  //     }
-  //   }
-  // }
+        await this.albumRepository.save(album);
+      }));
+    } catch (err) {
+      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+    }
+  }
 }

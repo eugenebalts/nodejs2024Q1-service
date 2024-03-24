@@ -14,7 +14,7 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDto, createAlbumSchema } from './dto/create-album.dto';
 import { ZodValidationPipe } from 'src/utils/zodValidationPipe';
 import { Response } from 'express';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import { UpdateAlbumDto, updateAlbumSchema } from './dto/update-album.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -26,39 +26,39 @@ export class AlbumController {
   }
 
   @Get(':id')
-  getAlbum(@Param('id') id: string, @Res() res: Response) {
-    const album = this.albumService.getAlbum(id);
+  async getAlbum(@Param('id') id: string, @Res() res: Response) {
+    const album = await this.albumService.getAlbum(id);
 
     res.status(HttpStatus.OK).send(album);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createAlbumSchema))
-  createAlbum(
+  async createAlbum(
     @Body()
     createAlbumDto: CreateAlbumDto,
     @Res() res: Response,
   ) {
-    const newAlbum = this.albumService.createAlbum(createAlbumDto);
+    const newAlbum = await this.albumService.createAlbum(createAlbumDto);
 
     res.status(HttpStatus.CREATED).send(newAlbum);
   }
 
   @Put(':id')
-  updateAlbum(
-    @Body(new ZodValidationPipe(createAlbumSchema))
+  async updateAlbum(
+    @Body(new ZodValidationPipe(updateAlbumSchema))
     updateAlbumDto: UpdateAlbumDto,
     @Param('id') id: string,
     @Res() res: Response,
   ) {
-    const updatedAlbum = this.albumService.updateAlbum(id, updateAlbumDto);
+    const updatedAlbum = await this.albumService.updateAlbum(id, updateAlbumDto);
 
     res.status(HttpStatus.OK).send(updatedAlbum);
   }
 
   @Delete(':id')
-  deleteAlbum(@Param('id') id: string, @Res() res: Response) {
-    this.albumService.deleteAlbum(id);
+  async deleteAlbum(@Param('id') id: string, @Res() res: Response) {
+    await this.albumService.deleteAlbum(id);
 
     res.status(HttpStatus.NO_CONTENT).send(true);
   }
