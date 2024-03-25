@@ -34,7 +34,10 @@ export class TrackController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(createTrackSchema))
-  async createTrack(@Body() createTrackDto: CreateTrackDto, @Res() res: Response) {
+  async createTrack(
+    @Body() createTrackDto: CreateTrackDto,
+    @Res() res: Response,
+  ) {
     const track = await this.trackService.createTrack(createTrackDto);
 
     res.status(HttpStatus.CREATED).send(track);
@@ -47,7 +50,10 @@ export class TrackController {
     @Param('id') id: string,
     @Res() res: Response,
   ) {
-    const updatedTrack = await this.trackService.updateTrack(id, updateTrackDto);
+    const updatedTrack = await this.trackService.updateTrack(
+      id,
+      updateTrackDto,
+    );
 
     res.status(HttpStatus.OK).send(updatedTrack);
   }

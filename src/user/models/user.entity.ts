@@ -8,10 +8,10 @@ export class PublicUser {
   @Column()
   login: string;
 
-  @Column({type: 'bigint'})
+  @Column({ type: 'bigint' })
   createdAt: number;
 
-  @Column({type: 'bigint'})
+  @Column({ type: 'bigint' })
   updatedAt: number;
 
   @Column({ default: 1 })

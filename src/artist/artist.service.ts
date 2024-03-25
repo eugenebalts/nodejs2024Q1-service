@@ -7,7 +7,11 @@ import {
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import { ERROR_INVALID_ID, FAILED_TO_DELETE, FAILED_TO_SAVE } from 'src/constants';
+import {
+  ERROR_INVALID_ID,
+  FAILED_TO_DELETE,
+  FAILED_TO_SAVE,
+} from 'src/constants';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Repository } from 'typeorm';
 import { Artist } from './models/artist.entity';
@@ -23,7 +27,7 @@ export class ArtistService {
     @InjectRepository(Track)
     private readonly trackRepository: Repository<Track>,
     @InjectRepository(Album)
-    private readonly albumRepository: Repository<Album>
+    private readonly albumRepository: Repository<Album>,
   ) {}
 
   async getAllArtists(): Promise<Artist[]> {
@@ -35,7 +39,7 @@ export class ArtistService {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const artist = await this.artistRepository.findOneBy({id});
+    const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
       throw new NotFoundException();
@@ -60,11 +64,16 @@ export class ArtistService {
 
       return newArtist;
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
-  async updateArtist(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+  async updateArtist(
+    id: string,
+    updateArtistDto: UpdateArtistDto,
+  ): Promise<Artist> {
     const artist = await this.getArtist(id);
 
     for (const key in updateArtistDto) {
@@ -80,7 +89,9 @@ export class ArtistService {
 
       return artist;
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
@@ -90,39 +101,52 @@ export class ArtistService {
     try {
       await this.artistRepository.delete(id);
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`)
+      throw new InternalServerErrorException(
+        `${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
 
     await this.updateTracksArtistId(id);
     await this.updateAlbumsArtistId(id);
-    // this.database.deleteFromFavorites(id, 'artists');
   }
 
   private async updateTracksArtistId(id: string) {
-    const tracksWithArtistId = await this.trackRepository.findBy({artistId: id});
+    const tracksWithArtistId = await this.trackRepository.findBy({
+      artistId: id,
+    });
 
     try {
-      await Promise.all(tracksWithArtistId.map(async (track) => {
-        track.artistId = null;
+      await Promise.all(
+        tracksWithArtistId.map(async (track) => {
+          track.artistId = null;
 
-        await this.trackRepository.save(track);
-      }));
+          await this.trackRepository.save(track);
+        }),
+      );
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
   private async updateAlbumsArtistId(id: string) {
-    const albumsWithArtistId = await this.albumRepository.findBy({artistId: id});
+    const albumsWithArtistId = await this.albumRepository.findBy({
+      artistId: id,
+    });
 
     try {
-      await Promise.all(albumsWithArtistId.map(async (album) => {
-        album.artistId = null;
+      await Promise.all(
+        albumsWithArtistId.map(async (album) => {
+          album.artistId = null;
 
-        await this.albumRepository.save(album);
-      }));
+          await this.albumRepository.save(album);
+        }),
+      );
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 }

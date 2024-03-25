@@ -51,7 +51,10 @@ export class AlbumController {
     @Param('id') id: string,
     @Res() res: Response,
   ) {
-    const updatedAlbum = await this.albumService.updateAlbum(id, updateAlbumDto);
+    const updatedAlbum = await this.albumService.updateAlbum(
+      id,
+      updateAlbumDto,
+    );
 
     res.status(HttpStatus.OK).send(updatedAlbum);
   }

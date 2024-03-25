@@ -34,7 +34,10 @@ export class ArtistController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(createArtistSchema))
-  async createArtist(@Body() createArtistDto: CreateArtistDto, @Res() res: Response) {
+  async createArtist(
+    @Body() createArtistDto: CreateArtistDto,
+    @Res() res: Response,
+  ) {
     const newArtist = await this.artistService.createArtist(createArtistDto);
 
     res.status(HttpStatus.CREATED).send(newArtist);
@@ -47,7 +50,10 @@ export class ArtistController {
     @Param('id') id: string,
     @Res() res: Response,
   ) {
-    const updatedArtist = await this.artistService.updateArtist(id, updateArtistDto);
+    const updatedArtist = await this.artistService.updateArtist(
+      id,
+      updateArtistDto,
+    );
 
     res.status(HttpStatus.OK).send(updatedArtist);
   }

@@ -91,8 +91,10 @@ export class UserService {
       await this.userRepository.save(newUser);
 
       return this.getPublicUserData(newUser);
-    } catch (_) {
-      throw new InternalServerErrorException(FAILED_TO_SAVE);
+    } catch (err) {
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
@@ -121,8 +123,10 @@ export class UserService {
       const user = await this.userRepository.save(updatedUser);
 
       return this.getPublicUserData(user);
-    } catch (_) {
-      throw new InternalServerErrorException(FAILED_TO_SAVE);
+    } catch (err) {
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
@@ -131,8 +135,10 @@ export class UserService {
 
     try {
       await this.userRepository.delete(id);
-    } catch (_) {
-      throw new InternalServerErrorException(FAILED_TO_DELETE);
+    } catch (err) {
+      throw new InternalServerErrorException(
+        `${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 }

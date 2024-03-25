@@ -7,18 +7,23 @@ import {
 import { CreateTrackDto } from './dto/create-track.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import { ERROR_INVALID_ID, FAILED_TO_DELETE, FAILED_TO_SAVE } from 'src/constants';
+import {
+  ERROR_INVALID_ID,
+  FAILED_TO_DELETE,
+  FAILED_TO_SAVE,
+} from 'src/constants';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './models/track.entity';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class TrackService {
-  // constructor(private database: DataBaseService) {}
   constructor(
     @InjectRepository(Track)
-    private readonly trackRepository: Repository<Track>
+    private readonly trackRepository: Repository<Track>,
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async getAllTracks(): Promise<Track[]> {
@@ -30,7 +35,7 @@ export class TrackService {
       throw new BadRequestException(ERROR_INVALID_ID);
     }
 
-    const track = await this.trackRepository.findOneBy({id});
+    const track = await this.trackRepository.findOneBy({ id });
 
     if (!track) {
       throw new NotFoundException();
@@ -52,11 +57,16 @@ export class TrackService {
 
       return newTrack;
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
-  async updateTrack(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+  async updateTrack(
+    id: string,
+    updateTrackDto: UpdateTrackDto,
+  ): Promise<Track> {
     const track = await this.getTrack(id);
 
     for (const key in updateTrackDto) {
@@ -71,19 +81,24 @@ export class TrackService {
       await this.trackRepository.save(track);
 
       return track;
-    } catch(err) {
-      throw new InternalServerErrorException(`${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`);
+    } catch (err) {
+      throw new InternalServerErrorException(
+        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
   }
 
   async deleteTrack(id: string): Promise<void> {
     await this.getTrack(id);
 
-    // this.database.deleteFromFavorites(id, 'tracks');
     try {
-      await this.trackRepository.delete({id});
+      await this.trackRepository.delete({ id });
     } catch (err) {
-      throw new InternalServerErrorException(`${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`);
+      throw new InternalServerErrorException(
+        `${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`,
+      );
     }
+
+    await this.favoritesService.deleteFromFavorites(id, 'tracks', 'update');
   }
 }

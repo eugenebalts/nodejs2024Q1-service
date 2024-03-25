@@ -11,6 +11,12 @@ import { User } from './user/models/user.entity';
 import { Track } from './track/models/track.entity';
 import { Artist } from './artist/models/artist.entity';
 import { Album } from './album/models/album.entity';
+import { Favorites } from './favorites/models/favorites.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } = process.env;
 
 @Module({
   imports: [
@@ -21,16 +27,16 @@ import { Album } from './album/models/album.entity';
     FavoritesModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'eugenebalts',
-      password: 'eugenebalts',
-      database: 'nestjs',
-      entities: [User, Track, Artist, Album],
+      host: DB_HOST,
+      port: parseInt(DB_PORT || '5432', 10),
+      username: DB_USERNAME,
+      password: DB_PASSWORD,
+      database: DB_DATABASE,
+      entities: [User, Track, Artist, Album, Favorites],
       synchronize: true,
     }),
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
 export class AppModule {}
