@@ -4,6 +4,11 @@ import { AppModule } from './app.module';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { parse } from 'yamljs';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+console.log(process.env.PORT);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

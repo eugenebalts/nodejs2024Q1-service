@@ -4,12 +4,17 @@ services:
     container_name: postgres
     build: 
       dockerfile: Dockerfile.postgres
+      context: .
     ports:
       - '5432:5432'
     env_file:
       - docker.env
     networks:
-      - postgres
+      - mynetwork
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
   api: 
     build:
       dockerfile: Dockerfile
@@ -20,7 +25,15 @@ services:
       - .env
     ports:
       - '4000:4000'
+    networks:
+      - mynetwork
+    volumes:
+      - ./src:/usr/src/app/src
+    command: npm run start:dev
 
 networks:
-  postgres:
+  mynetwork:
     driver: bridge
+
+volumes:
+  postgres_data:

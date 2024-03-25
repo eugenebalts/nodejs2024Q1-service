@@ -16,7 +16,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } = process.env;
+const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_URL } = process.env;
 
 @Module({
   imports: [
@@ -27,6 +27,7 @@ const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } = process.env;
     FavoritesModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
+      url: DB_URL,
       host: DB_HOST,
       port: parseInt(DB_PORT || '5432', 10),
       username: DB_USERNAME,
