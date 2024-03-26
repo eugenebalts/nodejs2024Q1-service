@@ -11,6 +11,14 @@
 git clone {repository URL}
 ```
 
+## Containerization
+
+```
+docker-compose up
+```
+
+please, make sure you are using last Docker Desctop version (important).
+
 ## Installing NPM modules
 
 ```
