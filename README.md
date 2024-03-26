@@ -4,12 +4,20 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Docker Desctop](https://nodejs.org/en/download/) and the npm package manager.
 
 ## Downloading
 
 ```
 git clone {repository URL}
 ```
+```
+git checkout services-week2
+```
+
+## Enviroment 
+
+rename `.env.example` to `.env`
 
 ## Containerization
 
@@ -17,7 +25,7 @@ git clone {repository URL}
 docker-compose up
 ```
 
-please, make sure you are using last Docker Desctop version (important).
+please make sure you are using last Docker Desctop version (important) [Docker](https://docs.docker.com/engine/install/).
 
 ## Installing NPM modules
 
@@ -71,6 +79,12 @@ npm run lint
 
 ```
 npm run format
+```
+
+## Vulnerabilities scanning 
+
+```
+npm run audit
 ```
 
 ### Debugging in VSCode
