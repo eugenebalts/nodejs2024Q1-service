@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TrackController } from './track.controller';
 import { TrackService } from './track.service';
-import { DataBaseModule } from 'src/database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Track } from './models/track.entity';
+import { FavoritesModule } from 'src/favorites/favorites.module';
 
 @Module({
-  imports: [DataBaseModule],
+  imports: [TypeOrmModule.forFeature([Track]), FavoritesModule],
   controllers: [TrackController],
   providers: [TrackService],
 })

@@ -15,48 +15,57 @@ export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
-  getAllFavorites() {
+  async getAllFavorites() {
     return this.favoritesService.getAllFavorites();
   }
 
   @Post('/track/:id')
-  addTrackToFavorites(@Param('id') id: string, @Res() res: Response) {
-    this.favoritesService.addToFavorites(id, 'tracks');
+  async addTrackToFavorites(@Param('id') id: string, @Res() res: Response) {
+    await this.favoritesService.addToFavorites(id, 'tracks');
 
     res.status(HttpStatus.CREATED).send('Success');
   }
 
   @Delete('/track/:id')
-  deleteTrackFromFavorites(@Param('id') id: string, @Res() res: Response) {
-    this.favoritesService.deleteFromFavorites(id, 'tracks');
+  async deleteTrackFromFavorites(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ) {
+    await this.favoritesService.deleteFromFavorites(id, 'tracks', 'delete');
 
     res.status(HttpStatus.NO_CONTENT).send('Success');
   }
 
   @Post('/artist/:id')
-  addArtistToFavorites(@Param('id') id: string, @Res() res: Response) {
-    this.favoritesService.addToFavorites(id, 'artists');
+  async addArtistToFavorites(@Param('id') id: string, @Res() res: Response) {
+    await this.favoritesService.addToFavorites(id, 'artists');
 
     res.status(HttpStatus.CREATED).send('Success');
   }
 
   @Delete('/artist/:id')
-  deleteArtistFromFavorites(@Param('id') id: string, @Res() res: Response) {
-    this.favoritesService.deleteFromFavorites(id, 'artists');
+  async deleteArtistFromFavorites(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ) {
+    await this.favoritesService.deleteFromFavorites(id, 'artists', 'delete');
 
     res.status(HttpStatus.NO_CONTENT).send('Success');
   }
 
   @Post('/album/:id')
-  addAlbumToFavorites(@Param('id') id: string, @Res() res: Response) {
-    this.favoritesService.addToFavorites(id, 'albums');
+  async addAlbumToFavorites(@Param('id') id: string, @Res() res: Response) {
+    await this.favoritesService.addToFavorites(id, 'albums');
 
     res.status(HttpStatus.CREATED).send('Success');
   }
 
   @Delete('/album/:id')
-  deleteAlbumFromFavorites(@Param('id') id: string, @Res() res: Response) {
-    this.favoritesService.deleteFromFavorites(id, 'albums');
+  async deleteAlbumFromFavorites(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ) {
+    await this.favoritesService.deleteFromFavorites(id, 'albums', 'delete');
 
     res.status(HttpStatus.NO_CONTENT).send('Success');
   }

@@ -4,7 +4,7 @@ export const createAlbumSchema = z
   .object({
     name: z.string(),
     year: z.number(),
-    artistId: z.string().nullable(),
+    artistId: z.string().uuid().nullable(),
   })
   .strict()
   .required();

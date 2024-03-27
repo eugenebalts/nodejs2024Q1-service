@@ -23,40 +23,43 @@ import {
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
-  getAll() {
-    return this.userService.getAllUsers();
+  async getAll() {
+    return await this.userService.getAllUsers();
   }
 
   @Get(':id')
-  getUser(@Param('id') id: string, @Res() res: Response) {
-    const user = this.userService.getUser(id);
+  async getUser(@Param('id') id: string, @Res() res: Response) {
+    const user = await this.userService.getUser(id, 'public');
 
     res.status(HttpStatus.OK).send(user);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createUserSchema))
-  createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-    const user = this.userService.createUser(createUserDto);
+  async createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+    const user = await this.userService.createUser(createUserDto);
 
     res.status(HttpStatus.CREATED).send(user);
   }
 
   @Put(':id')
-  updatePassword(
+  async updatePassword(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(updatePasswordSchema))
     updatePasswordDto: UpdatePasswordDto,
     @Res() res: Response,
   ) {
-    const updatedUser = this.userService.updatePassword(id, updatePasswordDto);
+    const updatedUser = await this.userService.updatePassword(
+      id,
+      updatePasswordDto,
+    );
 
     res.status(HttpStatus.OK).send(updatedUser);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string, @Res() res: Response) {
-    this.userService.deleteUser(id);
+  async deleteUser(@Param('id') id: string, @Res() res: Response) {
+    await this.userService.deleteUser(id);
 
     res.status(HttpStatus.NO_CONTENT).send(true);
   }
