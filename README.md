@@ -25,7 +25,7 @@ rename `.env.example` to `.env`
 docker-compose up
 ```
 
-please make sure you are using last Docker Desctop version (important) [Docker](https://docs.docker.com/engine/install/).
+Docker Hub repo: https://hub.docker.com/repository/docker/yauhenibaltsevich/nodejs-service/general
 
 ## Installing NPM modules
 
