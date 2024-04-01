@@ -60,9 +60,7 @@ export class AlbumService {
 
       return newAlbum;
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -85,9 +83,7 @@ export class AlbumService {
 
       return album;
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -97,9 +93,7 @@ export class AlbumService {
     try {
       await this.albumRepository.delete({ id });
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
 
     await this.updateTracksAlbumId(id);
@@ -120,9 +114,7 @@ export class AlbumService {
         }),
       );
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 }

@@ -138,7 +138,7 @@ export class FavoritesService {
 
     if (!isAddedToFavorites) {
       if (type === 'delete') {
-        throw new NotFoundException('delete');
+        throw new NotFoundException();
       }
 
       return;
@@ -159,9 +159,7 @@ export class FavoritesService {
     try {
       await this.favoritesRepository.save(newFavorites);
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 }

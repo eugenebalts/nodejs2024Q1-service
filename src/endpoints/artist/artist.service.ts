@@ -64,9 +64,7 @@ export class ArtistService {
 
       return newArtist;
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -89,9 +87,7 @@ export class ArtistService {
 
       return artist;
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -101,9 +97,7 @@ export class ArtistService {
     try {
       await this.artistRepository.delete(id);
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
 
     await this.updateTracksArtistId(id);
@@ -124,9 +118,7 @@ export class ArtistService {
         }),
       );
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -144,9 +136,7 @@ export class ArtistService {
         }),
       );
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 }

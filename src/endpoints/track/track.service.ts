@@ -57,9 +57,7 @@ export class TrackService {
 
       return newTrack;
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -82,9 +80,7 @@ export class TrackService {
 
       return track;
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_SAVE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
   }
 
@@ -94,9 +90,7 @@ export class TrackService {
     try {
       await this.trackRepository.delete({ id });
     } catch (err) {
-      throw new InternalServerErrorException(
-        `${FAILED_TO_DELETE}: ${err instanceof Error ? err.message : 'Failed'}`,
-      );
+      throw new InternalServerErrorException();
     }
 
     await this.favoritesService.deleteFromFavorites(id, 'tracks', 'update');
