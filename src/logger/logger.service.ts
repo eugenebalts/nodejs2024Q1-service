@@ -4,7 +4,7 @@ import * as fs from "fs/promises";
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
-  private logFilePath: string;
+  private pathToLogs: string;
   private logLevel: string;
 
   constructor() {
@@ -28,33 +28,34 @@ export class LoggerService extends ConsoleLogger {
   }
 
   private async initialize() {
-    this.logFilePath = await this.createLogDir();
+    const rootDir = process.cwd();
+    this.pathToLogs = path.join(rootDir, '/logs'); 
+    
     this.logLevel = process.env.LOG_LEVEL || 'error';
+
+    await this.createLogDir();
   }
 
   private async createLogDir() {
-    const rootDir = process.cwd();
-    const pathToLogs = path.join(rootDir, '/logs');
-
     try {
-      await fs.opendir(pathToLogs)
-
-      return pathToLogs;
+      await fs.access(this.pathToLogs)
     } catch (_) {
-      await fs.mkdir(pathToLogs);
-
-      return pathToLogs;
+      await fs.mkdir(this.pathToLogs);
     }
   }
 
   private async writeLog(message: string, level: string) {
-    if (!!this.logFilePath && !this.isEnableLevel(level)) return;
+    if (!this.isEnableLevel(level)) return;
 
     const timestamp = new Date().toISOString();
     const logName = String(new Date().getTime());
     const formatetMessage = `[${timestamp}] ${message}\n`;
 
-    await fs.writeFile(path.join(path.join(this.logFilePath), logName), formatetMessage, 'utf-8');
+    try {
+      await this.createLogDir();
+
+      await fs.writeFile(path.join(this.pathToLogs, logName), formatetMessage, {encoding: 'utf-8'});
+    } catch (_) {}
   }
 
   private isEnableLevel(level: string) {
