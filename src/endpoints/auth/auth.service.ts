@@ -3,12 +3,15 @@ import { UserService } from "../user/user.service";
 import { AuthUserDto } from "./dto/auth.dto";
 import { JwtService } from "@nestjs/jwt";
 import { PublicUser } from "../user/models/user.entity";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export class AuthService {
     constructor(private readonly userService: UserService, private readonly jwtService: JwtService) {}
 
-    async signIn(authUserDto: AuthUserDto): Promise<PublicUser> {
+    async signUp(authUserDto: AuthUserDto): Promise<PublicUser> {
         return await this.userService.createUser(authUserDto);
     }
 
@@ -21,7 +24,9 @@ export class AuthService {
             throw new ForbiddenException('You have entered an invalid login or password');
         }
 
-        const payload = { sub: user.id, login: user.login };
+        const secretKey = process.env.JWT_SECRET_KEY || 'secret123123';
+
+        const payload = { userId: user.id, login: user.login, secretKey };
 
         return {
             access_token: await this.jwtService.signAsync(payload),

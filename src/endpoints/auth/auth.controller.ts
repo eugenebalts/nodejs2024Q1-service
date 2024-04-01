@@ -9,9 +9,9 @@ export class AuthController {
 
     @HttpCode(HttpStatus.CREATED)
     @UsePipes(new ZodValidationPipe(authUserSchema))
-    @Post('signin')
-    async signIn(@Body() authUserDto: AuthUserDto) {
-        return this.authService.signIn(authUserDto);
+    @Post('signup')
+    async signUp(@Body() authUserDto: AuthUserDto) {
+        return this.authService.signUp(authUserDto);
     }
 
     @HttpCode(HttpStatus.OK)
