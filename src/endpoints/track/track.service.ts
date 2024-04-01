@@ -16,7 +16,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './models/track.entity';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class TrackService {

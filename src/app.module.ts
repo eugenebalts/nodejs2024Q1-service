@@ -1,20 +1,20 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { TrackModule } from './track/track.module';
-import { ArtistModule } from './artist/artist.module';
-import { AlbumModule } from './album/album.module';
-import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/models/user.entity';
-import { Track } from './track/models/track.entity';
-import { Artist } from './artist/models/artist.entity';
-import { Album } from './album/models/album.entity';
-import { Favorites } from './favorites/models/favorites.entity';
 import * as dotenv from 'dotenv';
 import { LoggerModule } from './logger/logger.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { UserModule } from './endpoints/user/user.module';
+import { TrackModule } from './endpoints/track/track.module';
+import { ArtistModule } from './endpoints/artist/artist.module';
+import { AlbumModule } from './endpoints/album/album.module';
+import { FavoritesModule } from './endpoints/favorites/favorites.module';
+import { User } from './endpoints/user/models/user.entity';
+import { Track } from './endpoints/track/models/track.entity';
+import { Artist } from './endpoints/artist/models/artist.entity';
+import { Album } from './endpoints/album/models/album.entity';
+import { Favorites } from './endpoints/favorites/models/favorites.entity';
 
 dotenv.config();
 

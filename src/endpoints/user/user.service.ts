@@ -12,7 +12,7 @@ import {
   ERROR_INVALID_ID,
   FAILED_TO_DELETE,
   FAILED_TO_SAVE,
-} from '../constants';
+} from '../../constants';
 import { Repository } from 'typeorm';
 import { User, PublicUser } from './models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';

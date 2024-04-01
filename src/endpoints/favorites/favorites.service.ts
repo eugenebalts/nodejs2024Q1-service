@@ -11,9 +11,9 @@ import { ERROR_INVALID_ID, FAILED_TO_SAVE } from 'src/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Favorites } from './models/favorites.entity';
-import { Artist } from 'src/artist/models/artist.entity';
-import { Album } from 'src/album/models/album.entity';
-import { Track } from 'src/track/models/track.entity';
+import { Artist } from '../artist/models/artist.entity';
+import { Album } from '../album/models/album.entity';
+import { Track } from '../track/models/track.entity';
 
 @Injectable()
 export class FavoritesService {
