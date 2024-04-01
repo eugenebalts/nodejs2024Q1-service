@@ -16,7 +16,7 @@ import { Artist } from './endpoints/artist/models/artist.entity';
 import { Album } from './endpoints/album/models/album.entity';
 import { Favorites } from './endpoints/favorites/models/favorites.entity';
 import { APP_FILTER } from '@nestjs/core';
-import { CustomExceptionFilter } from './filter/exception.filter';
+import { CustomExceptionFilter } from './filters/exception.filter';
 
 dotenv.config();
 
