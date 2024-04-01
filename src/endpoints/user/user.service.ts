@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -66,13 +67,17 @@ export class UserService {
           : PublicUser);
   }
 
+  async findUser(login: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({login});
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
     const { login, password } = createUserDto;
 
     const registeredUser = await this.userRepository.findOneBy({ login });
 
     if (registeredUser) {
-      return this.getPublicUserData(registeredUser);
+      throw new ConflictException('User with this login already exists');
     }
 
     const timestamp = new Date().getTime();

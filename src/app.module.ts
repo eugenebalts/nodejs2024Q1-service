@@ -17,6 +17,7 @@ import { Album } from './endpoints/album/models/album.entity';
 import { Favorites } from './endpoints/favorites/models/favorites.entity';
 import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/exception.filter';
+import { AuthModule } from './endpoints/auth/auth.module';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_URL } =
 
 @Module({
   imports: [
+    AuthModule,
     LoggerModule,
     UserModule,
     TrackModule,
