@@ -17,8 +17,6 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
 
-    console.log(request.headers);
-
     if (!authHeader) {
       throw new UnauthorizedException('Missing Authorization header');
     }
@@ -33,7 +31,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = decodedToken;
 
       return true;
-    } catch (error) {
+    } catch (_) {
       throw new UnauthorizedException('Invalid access token');
     }
   }
