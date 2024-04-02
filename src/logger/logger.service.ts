@@ -1,6 +1,6 @@
-import { Injectable, ConsoleLogger } from "@nestjs/common";
-import * as path from "path";
-import * as fs from "fs/promises";
+import { Injectable, ConsoleLogger } from '@nestjs/common';
+import * as path from 'path';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
@@ -13,12 +13,12 @@ export class LoggerService extends ConsoleLogger {
   }
 
   log(message: any) {
-      super.log(message);
-      this.writeLog(message, 'info');
+    super.log(message);
+    this.writeLog(message, 'info');
   }
 
   error(message: any) {
-    super.error(message)
+    super.error(message);
     this.writeLog(message, 'error');
   }
 
@@ -29,8 +29,8 @@ export class LoggerService extends ConsoleLogger {
 
   private async initialize() {
     const rootDir = process.cwd();
-    this.pathToLogs = path.join(rootDir, '/logs'); 
-    
+    this.pathToLogs = path.join(rootDir, '/logs');
+
     this.logLevel = process.env.LOG_LEVEL || 'error';
 
     await this.createLogDir();
@@ -38,7 +38,7 @@ export class LoggerService extends ConsoleLogger {
 
   private async createLogDir() {
     try {
-      await fs.access(this.pathToLogs)
+      await fs.access(this.pathToLogs);
     } catch (_) {
       await fs.mkdir(this.pathToLogs);
     }
@@ -54,7 +54,9 @@ export class LoggerService extends ConsoleLogger {
     try {
       await this.createLogDir();
 
-      await fs.writeFile(path.join(this.pathToLogs, logName), formatetMessage, {encoding: 'utf-8'});
+      await fs.writeFile(path.join(this.pathToLogs, logName), formatetMessage, {
+        encoding: 'utf-8',
+      });
     } catch (_) {}
   }
 

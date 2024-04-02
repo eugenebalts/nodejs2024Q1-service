@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { FavoritesResponse, RepositoryName } from './models/favorites.entity';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import { ERROR_INVALID_ID, FAILED_TO_SAVE } from 'src/constants';
+import { ERROR_INVALID_ID } from 'src/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Favorites } from './models/favorites.entity';

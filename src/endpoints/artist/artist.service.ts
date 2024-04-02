@@ -7,11 +7,7 @@ import {
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import {
-  ERROR_INVALID_ID,
-  FAILED_TO_DELETE,
-  FAILED_TO_SAVE,
-} from 'src/constants';
+import { ERROR_INVALID_ID } from 'src/constants';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Repository } from 'typeorm';
 import { Artist } from './models/artist.entity';

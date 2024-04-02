@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
@@ -15,7 +16,9 @@ import { Response } from 'express';
 import { CreateArtistDto, createArtistSchema } from './dto/create-artist.dto';
 import { ZodValidationPipe } from 'src/utils/zodValidationPipe';
 import { UpdateArtistDto, updateArtistSchema } from './dto/update-artist.dto';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}

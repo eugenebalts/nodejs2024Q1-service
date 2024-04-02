@@ -7,11 +7,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import {
-  ERROR_INVALID_ID,
-  FAILED_TO_DELETE,
-  FAILED_TO_SAVE,
-} from 'src/constants';
+import { ERROR_INVALID_ID } from 'src/constants';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from './models/album.entity';
