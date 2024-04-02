@@ -2,6 +2,7 @@ import { Controller, Post, Body, UsePipes, HttpCode, HttpStatus } from "@nestjs/
 import { AuthService } from "./auth.service";
 import { AuthUserDto, authUserSchema } from "./dto/auth.dto";
 import { ZodValidationPipe } from "src/utils/zodValidationPipe";
+import { RefreshTokenDto } from "./dto/refresh-token.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -20,4 +21,12 @@ export class AuthController {
     async login(@Body() authUserDto: AuthUserDto) {
         return this.authService.login(authUserDto);
     }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('refresh')
+    async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
+        return this.authService.refresh(refreshTokenDto);
+    }
+
+
 }
