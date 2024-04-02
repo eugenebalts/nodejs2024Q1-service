@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
@@ -15,7 +16,9 @@ import { ZodValidationPipe } from 'src/utils/zodValidationPipe';
 import { CreateTrackDto, createTrackSchema } from './dto/create-track.dto';
 import { Response } from 'express';
 import { UpdateTrackDto, updateTrackSchema } from './dto/update-track.dto';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}

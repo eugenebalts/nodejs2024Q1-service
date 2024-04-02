@@ -4,15 +4,17 @@ import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-    constructor (private readonly loggerService: LoggerService) {}
+  constructor(private readonly loggerService: LoggerService) {}
 
-    use(req: Request, res: Response, next: Function) {
+  use(req: Request, res: Response, next: Function) {
     const { method, originalUrl, query, body } = req;
 
     res.on('finish', () => {
       const { statusCode } = res;
 
-      this.loggerService.log(`Method: ${method}; URL: ${originalUrl}, Query: ${JSON.stringify(query)}; Body: ${JSON.stringify(body)} - Status Code: ${statusCode}`);
+      this.loggerService.log(
+        `Method: ${method}; URL: ${originalUrl}, Query: ${JSON.stringify(query)}; Body: ${JSON.stringify(body)} - Status Code: ${statusCode}`,
+      );
     });
 
     next();

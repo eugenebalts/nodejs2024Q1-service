@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -9,9 +8,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
-import {
-  ERROR_INVALID_ID,
-} from '../../constants';
+import { ERROR_INVALID_ID } from '../../constants';
 import { Repository } from 'typeorm';
 import { User, PublicUser } from './models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -70,7 +67,7 @@ export class UserService {
   }
 
   async findUser(login: string): Promise<User | null> {
-    return await this.userRepository.findOneBy({login});
+    return await this.userRepository.findOneBy({ login });
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
@@ -81,7 +78,7 @@ export class UserService {
     const registeredUser = await this.userRepository.findOneBy({ login });
 
     if (registeredUser) {
-      throw new ConflictException('User with this login already exists');
+      return this.getPublicUserData(registeredUser);
     }
 
     const timestamp = new Date().getTime();
@@ -113,7 +110,9 @@ export class UserService {
 
     const { newPassword, oldPassword } = updatePasswordDto;
 
-    if (oldPassword !== user.password) {
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
       throw new ForbiddenException('Wrong password');
     }
 

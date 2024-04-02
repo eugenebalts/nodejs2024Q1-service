@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
@@ -15,7 +16,9 @@ import { CreateAlbumDto, createAlbumSchema } from './dto/create-album.dto';
 import { ZodValidationPipe } from 'src/utils/zodValidationPipe';
 import { Response } from 'express';
 import { UpdateAlbumDto, updateAlbumSchema } from './dto/update-album.dto';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}

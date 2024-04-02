@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -18,10 +19,13 @@ import {
   UpdatePasswordDto,
   updatePasswordSchema,
 } from './dto/update-password.dto';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
   @Get()
   async getAll() {
     return await this.userService.getAllUsers();
