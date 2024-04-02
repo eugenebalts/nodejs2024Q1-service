@@ -11,13 +11,15 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { isValidUuid } from 'src/utils/isValidUuid';
 import {
   ERROR_INVALID_ID,
-  FAILED_TO_DELETE,
-  FAILED_TO_SAVE,
 } from '../../constants';
 import { Repository } from 'typeorm';
 import { User, PublicUser } from './models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export class UserService {
@@ -73,6 +75,8 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
     const { login, password } = createUserDto;
+    const CRYPTO_SALT = Number(process.env.CRYPT_SALT ?? 10);
+    const hashedPassword = await bcrypt.hash(password, CRYPTO_SALT);
 
     const registeredUser = await this.userRepository.findOneBy({ login });
 
@@ -86,7 +90,7 @@ export class UserService {
     const newUser: User = {
       id,
       login,
-      password,
+      password: hashedPassword,
       createdAt: timestamp,
       updatedAt: timestamp,
       version: 1,

@@ -4,6 +4,7 @@ import { AuthUserDto } from "./dto/auth.dto";
 import { JwtService } from "@nestjs/jwt";
 import { PublicUser } from "../user/models/user.entity";
 import * as dotenv from 'dotenv';
+import * as bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -20,7 +21,9 @@ export class AuthService {
 
         const user = await this.userService.findUser(login);
 
-        if (!user || user?.password !== password) {
+        const isCorrectPassword = user ? await bcrypt.compare(password, user.password) : false;
+
+        if (!user || !isCorrectPassword) {
             throw new ForbiddenException('You have entered an invalid login or password');
         }
 
