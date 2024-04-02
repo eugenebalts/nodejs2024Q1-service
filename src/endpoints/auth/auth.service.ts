@@ -88,6 +88,9 @@ export class AuthService {
       if (!isTokenValid) {
         throw new Error('Refresh token is expired');
       }
+      if (!isTokenValid) {
+        throw new Error('Refresh token is expired');
+      }
 
       await this.removeTokenPair(user.id);
 
