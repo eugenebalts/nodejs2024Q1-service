@@ -1,0 +1,39 @@
+version: '3'
+services:
+  postgres: 
+    container_name: postgres
+    build: 
+      dockerfile: Dockerfile.postgres
+      context: .
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    env_file:
+      - docker.env
+    networks:
+      - mynetwork
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  api: 
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - '${PORT}:${PORT}'
+    networks:
+      - mynetwork
+    volumes:
+      - ./src:/usr/src/app/src
+    command: npm run start:dev
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  postgres_data:
