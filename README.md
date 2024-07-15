@@ -11,9 +11,6 @@
 ```
 git clone {repository URL}
 ```
-```
-git checkout services-week2
-```
 
 ## Enviroment 
 
